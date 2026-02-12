@@ -1,29 +1,47 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
-from secret.models import Secret
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+
 
 class User(AbstractUser):
-    id = models.IntegerField(primary_key=True)
     username = None
-    email = models.EmailField(unique = True, max_length=100, required=True)
-    name = models.CharField(max_length=100, required=True)
-    password = models.CharField(max_length=100, required=True)
+    email = models.EmailField(unique = True, max_length=100)
+    name = models.CharField(max_length=100)
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = UserManager()
 
 
     def __str__(self):
-        return f"User {self.id} - {self.name}"    
+        return f"User {self.id} - {self.name}" 
 
-class Otp(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
-    secret = models.ForeignKey(Secret, on_delete=models.CASCADE, related_name='otps')
-    code = models.CharField(max_length=6, required=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"OTP {self.id} for User {self.user.name} - Code: {self.code}"
+    class Meta:
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['name']),
+        ]   
 
  
