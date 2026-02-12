@@ -20,7 +20,7 @@ class Secret(models.Model):
 
 class Otp(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
-    secret = models.ForeignKey(Secret, on_delete=models.CASCADE, related_name='otps')
+    secret = models.ForeignKey(Secret, on_delete=models.CASCADE, related_name='otps', null=True, blank=True)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 

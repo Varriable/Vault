@@ -1,4 +1,5 @@
 from ..apps.secret.models import Otp
+from ..utils.email import send_otp_email
 
 class OtpService:
     @staticmethod
@@ -19,3 +20,18 @@ class OtpService:
             return otp
         except Otp.DoesNotExist:
             raise ValueError("OTP not found")
+        
+    @staticmethod
+    def email_otp(user_email: str, otp_code: int) -> str:
+        send_otp_email(user_email, otp_code)
+
+    @staticmethod
+    def validate_otp(user, code: int, secret=None) -> bool:
+        try:
+            if secret:
+                otp = Otp.objects.get(user=user, code=code, secret=secret)
+            else:
+                otp = Otp.objects.get(user=user, code=code)
+            return True
+        except Otp.DoesNotExist:
+            return False
