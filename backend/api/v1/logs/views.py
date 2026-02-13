@@ -3,9 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import LogSerializer
-from ....apps.log.models import Log
-from ....services.log_service import LogService
-from ....services.user_service import UserService
+from apps.log.models import Log
+from services.log_service import LogService
+from services.user_service import UserService
 logService = LogService()
 userService = UserService()
 

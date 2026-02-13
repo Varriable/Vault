@@ -1,4 +1,4 @@
-from ....apps.secret.models import Otp
+from apps.secret.models import Otp
 from rest_framework import serializers
 
 class OtpSerializer(serializers.ModelSerializer):    

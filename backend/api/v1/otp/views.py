@@ -2,9 +2,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework import viewsets, status, APIView
 from rest_framework.response import Response
 from .serializers import OtpSerializer
-from ....services.otp_service import OtpService
-from ....services.user_service import UserService
-from ....services.secret_service import SecretService
+from services.otp_service import OtpService
+from services.user_service import UserService
+from services.secret_service import SecretService
 otpService = OtpService()
 userService = UserService()
 secretService = SecretService()

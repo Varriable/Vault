@@ -5,7 +5,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import SecretSerializer
-from ....services.secret_service import SecretService
+from services.secret_service import SecretService
 secretService = SecretService()
 
 class SecretCreateView(APIView):

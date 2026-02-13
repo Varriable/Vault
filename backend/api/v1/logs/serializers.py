@@ -1,8 +1,8 @@
-from ....apps.log.models import Log
+from apps.log.models import Log
 from rest_framework import serializers
 
 class LogSerializer(serializers.ModelSerializer):    
-    name = serializers.SerrializerMethodField()
+    name = serializers.SerializerMethodField()
     user_id = serializers.IntegerField(write_only=True)
 
     class Meta:

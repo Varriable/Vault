@@ -1,4 +1,4 @@
-from ..apps.secret.models import Secret
+from apps.secret.models import Secret
 
 class SecretService:
     @staticmethod

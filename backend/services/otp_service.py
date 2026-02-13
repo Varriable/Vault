@@ -1,6 +1,6 @@
 from datetime import timedelta, timezone
-from ..apps.secret.models import Otp
-from ..utils.email import send_otp_email
+from apps.secret.models import Otp
+from utils.email import send_otp_email
 
 class OtpService:
     @staticmethod
