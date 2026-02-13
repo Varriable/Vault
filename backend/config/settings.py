@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,22 +39,42 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'apps.user',
+    'apps.secret',
+    'apps.log',
+
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
 
-    'apps.user',
-    'apps.secret',
-    'apps.log',
+    
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'apps.user.authentication.CookieJWTAuthentication',
     )
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS256',
+}
+
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173",]
+CORS_ALLOW_CREDENTIALS = True
+
+CRF_TRUSTED_ORIGINS = ["http://localhost:5173",]
+
+SESSION_COOKIE_SAMESITE = 'Lax'
+CRF_COOKIE_SAMESITE = 'Lax'
+
+SESSION_COOKIE_SECURE = True
+CRF_COOKIE_SECURE = True
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
