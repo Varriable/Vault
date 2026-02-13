@@ -17,7 +17,9 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         try:
-            user = authenticate(request, email, password)
+            if not email or not password:
+                raise ValueError("Email and password are required")
+            user = authenticate(request, email=email, password=password)
             if user:
                 response = Response(UserSerializer(user).data, status=status.HTTP_200_OK)
                 refresh_token = RefreshToken.for_user(user)
@@ -26,7 +28,7 @@ class LoginView(APIView):
                     key='access_token',
                     value=access_token,
                     httponly=True,
-                    security=False,
+                    secure=False,
                     samesite='Lax',
                     max_age=15 * 60,  # 15 minutes
                 )
@@ -34,7 +36,7 @@ class LoginView(APIView):
                     key='refresh_token',
                     value=str(refresh_token),
                     httponly=True,
-                    security=False,
+                    secure=False,
                     samesite='Lax',
                     max_age=24 * 60 * 60,  # 1 day
                 )
