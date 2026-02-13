@@ -1,17 +1,18 @@
 <script lang="ts">
-    import { user } from '$lib/store/userStore';
+    import { userStore } from '$lib/index';
     import { login } from '$lib/api/auth';
-	import { enableCompileCache } from 'module';
     let email = $state('')
     let password = $state('')
 
     function handleLogin() {
+        console.log('Attempting login with email:', email);
         login(email, password)
+        console.log('User logged in:', userStore.user);
     }
 </script>
 
-{#if user}
-    <h1>Welcome, {user.name}!</h1>
+{#if userStore.user}
+    <h1>Welcome, {userStore.user.name}!</h1>
 {:else}
     <h1>Please log in to access your vault.</h1>
     <input type="text" placeholder="email" bind:value={email} />
