@@ -1,4 +1,4 @@
-from ..apps.log.models import Log
+from apps.log.models import Log
 
 class LogService:
     @staticmethod

@@ -1,8 +1,8 @@
-from ....apps.secret.models import Secret
+from apps.secret.models import Secret
 from rest_framework import serializers
 
 class SecretSerializer(serializers.ModelSerializer):    
-    name = serializers.SerrializerMethodField()
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = Secret

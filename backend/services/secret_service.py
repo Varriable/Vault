@@ -1,4 +1,4 @@
-from ..apps.secret.models import Secret
+from apps.secret.models import Secret
 
 class SecretService:
     @staticmethod
@@ -37,3 +37,13 @@ class SecretService:
             return secret
         except Secret.DoesNotExist:
             raise ValueError("Secret not found")
+        
+    @staticmethod
+    def get_all_secrets() -> list[Secret]:
+        secrets = Secret.objects.all() 
+        return secrets
+    
+    @staticmethod
+    def get_secrets_by_user_id(user_id: int) -> list[Secret]:
+        secrets = Secret.objects.filter(user_id=user_id) 
+        return secrets

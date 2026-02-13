@@ -1,4 +1,4 @@
-from ..apps.user.models import User
+from apps.user.models import User
 
 class UserService:
     @staticmethod
@@ -26,3 +26,14 @@ class UserService:
             user.save()
         except User.DoesNotExist: 
             raise ValueError("User not found")
+        
+    @staticmethod
+    def get_user(user_id: int) -> User:
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise ValueError("User not found")
+        
+    @staticmethod
+    def get_all_users() -> list[User]:
+        return User.objects.filter(is_active=True)
