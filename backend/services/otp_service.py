@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 from ..apps.secret.models import Otp
 from ..utils.email import send_otp_email
 
@@ -22,8 +23,9 @@ class OtpService:
             raise ValueError("OTP not found")
         
     @staticmethod
-    def email_otp(user_email: str, otp_code: int) -> str:
-        send_otp_email(user_email, otp_code)
+    def email_otp(user, secret, self) -> str:
+        otp = self.create_otp(user, secret)
+        send_otp_email(user.email, otp.code)
 
     @staticmethod
     def validate_otp(user, code: int, secret=None) -> bool:
@@ -32,6 +34,8 @@ class OtpService:
                 otp = Otp.objects.get(user=user, code=code, secret=secret)
             else:
                 otp = Otp.objects.get(user=user, code=code)
+            if otp.created_at < timezone.now() - timedelta(minutes=5):
+                return False
             return True
         except Otp.DoesNotExist:
             return False
