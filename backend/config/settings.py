@@ -70,8 +70,8 @@ CRF_TRUSTED_ORIGINS = ["http://localhost:5173",]
 SESSION_COOKIE_SAMESITE = 'Lax'
 CRF_COOKIE_SAMESITE = 'Lax'
 
-SESSION_COOKIE_SECURE = True
-CRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# CRF_COOKIE_SECURE = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
