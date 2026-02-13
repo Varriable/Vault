@@ -1,6 +1,7 @@
 // place files you want to import through the `$lib` alias in this folder.
 import {apiRequest} from './api/client';
 import { userStore } from './store/userStore.svelte';
+import { login, register, logout } from './api/auth';
 
 
 //types
@@ -25,4 +26,7 @@ export {
     userStore,
     type User,
     type Secret,
+    login,
+    register,
+    logout,
 }

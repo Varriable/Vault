@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+@layer utilities {
+    .h1 {
+        @apply text-4xl font-bold mb-4;
+    }
+    .input {
+        @apply w-full p-2 border border-gray-300 rounded mb-4;
+    }
+    .p {
+        @apply text-gray-700 mb-4;
+    }
+    .a{
+        @apply text-blue-500 hover:underline;   
+    }
+}
+
