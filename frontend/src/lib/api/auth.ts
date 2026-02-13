@@ -1,7 +1,7 @@
 import { apiRequest, type User, userStore } from '$lib/index';
 
 export async function login(email: string, password: string): Promise<User> {
-    const user: User = await apiRequest('/api/token', {
+    const user: User = await apiRequest('/v1/user/token', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
     });
@@ -11,5 +11,8 @@ export async function login(email: string, password: string): Promise<User> {
     }
 
 export async function logout(): Promise<void> {
+    await apiRequest('/v1/user/logout', {
+        method: 'POST',
+    });
     userStore.clearUser();
 }
