@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import LogSerializer
@@ -41,7 +42,7 @@ class LogDetailView(APIView):
             log = logService.get_log_by_id(log_id)
             serializer = LogSerializer(log)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except ValueError as e:
+        except NotFound as e:
             return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 class LogDeleteView(APIView):
@@ -51,7 +52,7 @@ class LogDeleteView(APIView):
         try:
             logService.delete_log(log_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except ValueError as e:
+        except NotFound as e:
             return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
         
 class ClearUserLogsView(APIView):
