@@ -3,8 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.exceptions import NotFound
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from utils.exceptions import EmailAlreadyExistsException
 
 
 from .serializers import UserSerializer
@@ -60,7 +63,7 @@ class RefreshView(APIView):
                 key='access_token',
                 value=new_access_token,
                 httponly=True,
-                security=False,
+                secure=False,
                 samesite='Lax',
                 max_age=15 * 60,  # 15 minutes
             )
@@ -79,11 +82,12 @@ class LogoutView(APIView):
 class UserCreateView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user_data = serializer.validated_data
-            user = user_service.create_user(user_data)
-            return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        try :
+            user = user_service.create_user(**serializer.validated_data)
+            return Response(UserSerializer(user).data, status=201)
+        except EmailAlreadyExistsException as e:
+            return Response({"error": str(e)}, status=400)
 
 @permission_classes([IsAuthenticated])   
 class UserEditView(APIView):
@@ -94,7 +98,7 @@ class UserEditView(APIView):
             try:
                 user = user_service.edit_user(user_id, user_data)
                 return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-            except ValueError as e:
+            except NotFound as e:
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -104,7 +108,7 @@ class UserDeleteView(APIView):
         try:
             user_service.delete_user(user_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except ValueError as e:
+        except NotFound as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 @permission_classes([IsAuthenticated])       
@@ -125,5 +129,5 @@ class UserDetailView(APIView):
         try:
             user = user_service.get_user(user_id)
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-        except ValueError as e:
+        except NotFound as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)

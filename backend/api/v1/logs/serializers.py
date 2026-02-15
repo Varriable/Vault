@@ -7,7 +7,7 @@ class LogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Log
-        fields = ['id', 'name', 'user_id', 'action', 'created_at']
+        fields = ['id', 'name', 'user_id', 'action', 'timestamp']
 
-    def get_user(self,obj):
+    def get_name(self, obj):
         return obj.user.name

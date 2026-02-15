@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import NotFound
 
 from .serializers import SecretSerializer
 from services.secret_service import SecretService
@@ -28,7 +29,7 @@ class SecretEditView(APIView):
             try:
                 secret = secretService.edit_secret(secret_id, secret_data.get('title'), secret_data.get('key'))
                 return Response({"message": "Secret updated successfully", "secret": secret}, status=status.HTTP_200_OK)
-            except ValueError as e:
+            except NotFound as e:
                 return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -39,7 +40,7 @@ class SecretDeleteView(APIView):
         try:
             secretService.delete_secret(secret_id)
             return Response({"message": "Secret deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-        except ValueError as e:
+        except NotFound as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         
 class UserSecretsListView(APIView):
@@ -56,7 +57,7 @@ class SecretDetailView(APIView):
         try:
             secret = secretService.get_secret_by_id(secret_id)
             return Response(SecretSerializer(secret).data, status=status.HTTP_200_OK)
-        except ValueError as e:
+        except NotFound as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
         
 class SecretListView(APIView):
