@@ -56,7 +56,7 @@ class OtpService:
                 otp = Otp.objects.get(user=userObj, code=code_str)
         except Otp.DoesNotExist: raise ObjectNotFoundException("OTP is invalid")
         if otp.created_at < timezone.now() - timedelta(minutes=5):
-            raise OtpException("OTP has expired")
+            return False
         return True
         
 

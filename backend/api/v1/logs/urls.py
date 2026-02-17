@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import LogListCreateView, UserLogsView, LogDetailView, LogDeleteView, ClearUserLogsView, AllLogsView, LogsByActionView
+from .views import LogCreateView, UserLogsView, LogDetailView, LogDeleteView, ClearUserLogsView, AllLogsView, LogsByActionView
 
 urlpatterns = [
-    path('create/', LogListCreateView.as_view(), name='log-list-create'),
+    path('create/', LogCreateView.as_view(), name='log-list-create'),
     path('user/<int:user_id>/', UserLogsView.as_view(), name='user-logs'),
     path('<int:log_id>/', LogDetailView.as_view(), name='log-detail'),
     path('<int:log_id>/delete/', LogDeleteView.as_view(), name='log-delete'),

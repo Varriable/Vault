@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from utils.exceptions import EmailAlreadyExistsException
+from utils.exceptions import EmailAlreadyExistsException, ObjectNotFoundException
 
 
 from .serializers import UserSerializer
@@ -87,29 +87,28 @@ class UserCreateView(APIView):
             user = user_service.create_user(**serializer.validated_data)
             return Response(UserSerializer(user).data, status=201)
         except EmailAlreadyExistsException as e:
-            return Response({"error": str(e)}, status=400)
+            return Response({"message": str(e)}, status=400)
 
 @permission_classes([IsAuthenticated])   
 class UserEditView(APIView):
-    def put(self, request, user_id):
+    def put(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user_data = serializer.validated_data
-            try:
-                user = user_service.edit_user(user_id, user_data)
-                return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-            except NotFound as e:
-                return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = user_service.edit_user(**serializer.validated_data)
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        except ObjectNotFoundException as e:
+                return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 @permission_classes([IsAuthenticated])
 class UserDeleteView(APIView):
-    def delete(self, request, user_id):
+    def delete(self, request):
         try:
+            user_id = request.data.get('user_id')
             user_service.delete_user(user_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except NotFound as e:
-            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except ObjectNotFoundException as e:
+            return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 @permission_classes([IsAuthenticated])       
 class UserListView(APIView):
@@ -120,14 +119,19 @@ class UserListView(APIView):
 @permission_classes([IsAuthenticated])   
 class MeView(APIView):
     def get(self, request):
-        user = request.user
-        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-
-@permission_classes([IsAuthenticated])
-class UserDetailView(APIView):
-    def get(self, request, user_id):
+        user_id = request.data.get('user_id')
         try:
             user = user_service.get_user(user_id)
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
         except NotFound as e:
-            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+@permission_classes([IsAuthenticated])
+class UserDetailView(APIView):
+    def get(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            user = user_service.get_user(user_id)
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        except NotFound as e:
+            return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
