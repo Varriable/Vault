@@ -12,10 +12,18 @@
         goto('/vault')
         
     }
+    $effect(() => {
+        if (userStore.user) {
+            setTimeout(() => {
+                goto('/vault')
+            }, 2000)
+        }
+    })
 </script>
 
-{#if userStore.user}
-    <h1 class="h1">Welcome, {userStore.user.name}!</h1>
+{#if userStore.user }
+    <h1 class="h1" >Welcome, {userStore.user.name}!, you will be redirected in a few ...</h1>
+    
 {:else}
     <h1 class="h1">Please log in to access your vault.</h1>
     <input class="input" type="text" placeholder="email" bind:value={email} />
